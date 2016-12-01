@@ -39,7 +39,7 @@ const uuid = require('uuid');
 
 class MessageServer {
 
-  constructor(id = uuid.v4(), peers = {}) {
+  constructor(id = uuid.v4(), peers = null) {
     dotenv.load({silent: true, path: './server/.env'});
     this.SHARE_DELAY = process.env.SHARE_DELAY;
 
@@ -50,6 +50,7 @@ class MessageServer {
     this.messages = {};
     this.intervals = [];
 
+    if (!this.peers) this.peers = process.env.PEERS;
     this.socket.on('message', this._parseMessage.bind(this));
   }
 

@@ -16,7 +16,7 @@ const readline = require('readline');
 
 class MessageClient {
 
-  constructor({messageServer = null, id = uuid.v4(), prompt = false} = {}) {
+  constructor({messageServer = null, id = uuid.v4(), prompt = true} = {}) {
     dotenv.load({silent: true, path: './client/.env'});
 
     if (!messageServer) messageServer = process.env.MESSAGE_SERVER;

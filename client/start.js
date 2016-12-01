@@ -1,4 +1,4 @@
 const MessageClient = require('./index').client;
 
-let me = new MessageClient();
-me.connect(43010);
+let me = new MessageClient(process.argv[0]);
+me.connect(process.argv[1]);
