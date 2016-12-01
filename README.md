@@ -37,7 +37,7 @@ Tests include senarios for:
 
 __Socket Library Used:__ [Nodejs Native Datagram Sockets](https://nodejs.org/api/dgram.html) 
 
-Servers use a distance vector sharing technique with the aim to create efficient forwarding routes. The weights on the routes are increased when clients connect, and decrease over time (each server tick).  
+Servers use a distance vector sharing technique with the aim to create efficient forwarding routes. The weights on the routes are increased when clients communicate, and decrease over time (each server tick).  
   
 This allows for servers who communicate often with clients to receive their messages, and also allows for messages to be moved to more relevant servers when the clients change connections. Idle information is not propagated, and only recent information is saved.
 
