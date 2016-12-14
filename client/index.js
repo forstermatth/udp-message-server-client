@@ -20,7 +20,6 @@ class MessageClient {
     dotenv.load({silent: true, path: './client/.env'});
 
     if (!messageServer) messageServer = process.env.MESSAGE_SERVER;
-
     this.server = {
       ip: messageServer.split(':')[0],
       port: messageServer.split(':')[1]
@@ -36,8 +35,8 @@ class MessageClient {
     this.socket.on('message', this._recieveMessage.bind(this));
   }
 
-  connect(port = process.env.PORT) {
-    return this.socket.bind({port}, err => {
+  connect(address, port = process.env.PORT) {
+    return this.socket.bind({port, address}, err => {
       if (err) throw err;
       console.log(`Client ${this.id}: Connected`);
 
@@ -62,8 +61,8 @@ class MessageClient {
       }
 
       this._getMessages();
-      if (this.prompt) this.intervals.push(setInterval(this._displayMessages.bind(this), 1000));
-      this.intervals.push(setInterval(this._getMessages.bind(this), 250));
+      if (this.prompt) this.intervals.push(setInterval(this._displayMessages.bind(this), 5000));
+      this.intervals.push(setInterval(this._getMessages.bind(this), 3250));
     });
   }
 
@@ -72,6 +71,7 @@ class MessageClient {
   }
 
   _displayMessages() {
+    console.log(`Client ${this.id}: display messages`);
     if (!this.messages.length) return;
     let sorted = _.sortBy(this.messages, ['sequence']);
     sorted.map(message => console.log(`
@@ -82,6 +82,7 @@ class MessageClient {
 
   _recieveMessage(msg) {
     msg = JSON.parse(msg.toString());
+    console.log(msg);
     if (msg.destination !== this.id) return;
     console.log(`Client ${this.id}: recieved message ${msg.sequence} from ${msg.source}`);
     this.messages.push(msg);

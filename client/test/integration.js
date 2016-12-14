@@ -26,7 +26,6 @@ describe('Integration: Client', function () {
 
     before(() => {
       serverOne = new MessageServer();
-      serverOne.connect(43001);
 
       clientOne = new MessageClient({
         messageServer: '127.0.0.1:43001',
@@ -37,6 +36,7 @@ describe('Integration: Client', function () {
         prompt: false
       });
 
+      serverOne.connect(43001);
       clientOne.connect(43010);
       clientTwo.connect(43020);
     });
@@ -74,7 +74,7 @@ describe('Integration: Client', function () {
     });
   });
 
-  describe('Client -> Server -> Server -> Client', () => {
+  describe('Client -> Server <-> Server -> Client', () => {
     let clientOne;
     let clientTwo;
     let serverOne;
@@ -94,8 +94,7 @@ describe('Integration: Client', function () {
     before(() => {
       serverOne = new MessageServer('server-1', peers);
       serverTwo = new MessageServer('server-2', peers);
-      serverOne.connect(43001);
-      serverTwo.connect(43002);
+
 
       clientOne = new MessageClient({
         messageServer: '127.0.0.1:43001',
@@ -106,6 +105,8 @@ describe('Integration: Client', function () {
         prompt: false
       });
 
+      serverOne.connect(43001);
+      serverTwo.connect(43002);
       clientOne.connect(43010);
       clientTwo.connect(43020);
     });
@@ -225,11 +226,6 @@ describe('Integration: Client', function () {
       serverThree = new MessageServer('server-3', peersThree);
       serverFour = new MessageServer('server-4', peersFour);
       serverFive = new MessageServer('server-5', peersFive);
-      serverOne.connect(43001);
-      serverTwo.connect(43002);
-      serverThree.connect(43003);
-      serverFour.connect(43004);
-      serverFive.connect(43005);
 
       clientOne = new MessageClient({
         messageServer: '127.0.0.1:43001',
@@ -240,6 +236,11 @@ describe('Integration: Client', function () {
         prompt: false
       });
 
+      serverOne.connect(43001);
+      serverTwo.connect(43002);
+      serverThree.connect(43003);
+      serverFour.connect(43004);
+      serverFive.connect(43005);
       clientOne.connect(43010);
       clientTwo.connect(43020);
     });

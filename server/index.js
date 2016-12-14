@@ -39,9 +39,8 @@ const uuid = require('uuid');
 
 class MessageServer {
 
-  constructor(id = uuid.v4(), peers = null) {
+  constructor(id = uuid.v4(), peers = null, shareDelay = null) {
     dotenv.load({silent: true, path: './server/.env'});
-    this.SHARE_DELAY = process.env.SHARE_DELAY;
 
     this.id = id;
     this.peers = peers;
@@ -49,13 +48,15 @@ class MessageServer {
     this.clients = {};
     this.messages = {};
     this.intervals = [];
-
-    if (!this.peers) this.peers = process.env.PEERS;
+    this.SHARE_DELAY = shareDelay;
+    if (!this.SHARE_DELAY) this.SHARE_DELAY = process.env.SHARE_DELAY;
+    if (!this.SHARE_DELAY) throw new Error('Requires Share Delay');
+    if (!this.peers) this.peers = JSON.parse(process.env.PEERS);
     this.socket.on('message', this._parseMessage.bind(this));
   }
 
   connect(port = process.env.PORT) {
-    return this.socket.bind({port}, err => {
+    return this.socket.bind({port, address: this.peers[this.id].ip}, err => {
       if (err) throw err;
       console.log(`Server ${this.id}: Connected`);
 
@@ -72,7 +73,7 @@ class MessageServer {
     msg = JSON.parse(msg.toString());
 
     let address = {
-      address: reqInfo.ip,
+      address: reqInfo.address,
       port: reqInfo.port
     };
 
@@ -228,7 +229,6 @@ class MessageServer {
     _.remove(messages, message => message.sequence === msg.sequence);
     this.messages[msg.source] = messages;
   }
-
 }
 
 exports.server = MessageServer;
