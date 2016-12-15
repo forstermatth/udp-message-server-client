@@ -51,12 +51,19 @@ class MessageServer {
     this.SHARE_DELAY = shareDelay;
     if (!this.SHARE_DELAY) this.SHARE_DELAY = process.env.SHARE_DELAY;
     if (!this.SHARE_DELAY) throw new Error('Requires Share Delay');
-    if (!this.peers) this.peers = JSON.parse(process.env.PEERS);
+    if (!this.peers) this.peers = process.env.PEERS;
+
+    if (_.isString(this.peers)) this.peers = JSON.parse(this.peers);
+
     this.socket.on('message', this._parseMessage.bind(this));
   }
 
   connect(port = process.env.PORT) {
-    return this.socket.bind({port, address: this.peers[this.id].ip}, err => {
+
+    let options = {port};
+    if (this.peers && this.peers[this.id]) options.address = this.peers[this.id].ip;
+
+    return this.socket.bind(options, err => {
       if (err) throw err;
       console.log(`Server ${this.id}: Connected`);
 

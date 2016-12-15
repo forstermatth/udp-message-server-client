@@ -35,7 +35,10 @@ class MessageClient {
     this.socket.on('message', this._recieveMessage.bind(this));
   }
 
-  connect(address, port = process.env.PORT) {
+  connect(port = process.env.PORT, address) {
+    let options = {port};
+    if (address) options.address = address;
+
     return this.socket.bind({port, address}, err => {
       if (err) throw err;
       console.log(`Client ${this.id}: Connected`);
@@ -61,8 +64,8 @@ class MessageClient {
       }
 
       this._getMessages();
-      if (this.prompt) this.intervals.push(setInterval(this._displayMessages.bind(this), 5000));
-      this.intervals.push(setInterval(this._getMessages.bind(this), 3250));
+      if (this.prompt) this.intervals.push(setInterval(this._displayMessages.bind(this), process.env.MESSAGE_DELAY * 4));
+      this.intervals.push(setInterval(this._getMessages.bind(this), process.env.MESSAGE_DELAY));
     });
   }
 
@@ -71,7 +74,6 @@ class MessageClient {
   }
 
   _displayMessages() {
-    console.log(`Client ${this.id}: display messages`);
     if (!this.messages.length) return;
     let sorted = _.sortBy(this.messages, ['sequence']);
     sorted.map(message => console.log(`
